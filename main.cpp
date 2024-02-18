@@ -32,6 +32,7 @@ struct Bullet{
 void start_game();
 int show_menu();
 void play_game(int &map_size, int &target_point);
+void move_bullets(vector<Bullet> &bullets);
 void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets);
 void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet> &bullets);
 void render_map(int &map_size, Spaceship &my_spaceship, vector<Bullet> &bullets);
@@ -85,13 +86,16 @@ int show_menu(){
 }
 
 void play_game(int &map_size, int &target_point){
+    
+    srand(time(0));
+
 
     Spaceship my_spaceship;
+    vector<Bullet> bullets;
 
     my_spaceship.x = map_size - 1;
     my_spaceship.y = (map_size - 1) / 2;
     
-    vector<Bullet> bullets;
 
     render_map(map_size, my_spaceship, bullets);
     
@@ -110,6 +114,20 @@ void play_game(int &map_size, int &target_point){
     
 }
 
+void move_bullets(vector<Bullet> &bullets){
+
+    int index_indicator = 0;
+
+    for (Bullet &bullet : bullets){
+        bullet.x--;
+
+        if (bullet.x < 0){
+            bullets.erase(bullets.begin() + index_indicator); continue;
+        }
+        index_indicator++;
+    }
+}
+
 void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets){
     if (my_spaceship.y > 0){
         my_spaceship.y--;
@@ -118,9 +136,7 @@ void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets){
         new_bullet.x = my_spaceship.x - 1;
         new_bullet.y = my_spaceship.y;
 
-        for (Bullet &bullet : bullets){
-            bullet.x--;
-        }
+        move_bullets(bullets);
 
         bullets.push_back(new_bullet);
     }
@@ -133,9 +149,7 @@ void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet>
         new_bullet.x = my_spaceship.x - 1;
         new_bullet.y = my_spaceship.y;
 
-        for (Bullet &bullet : bullets){
-            bullet.x--;
-        }
+        move_bullets(bullets);
 
         bullets.push_back(new_bullet);
     }
