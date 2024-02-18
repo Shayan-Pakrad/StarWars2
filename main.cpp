@@ -28,7 +28,7 @@ void menu();
 int show_menu();
 void play_game(int &map_size, int &target_point);
 void move_spaceship_left(Spaceship &my_spaceship);
-void move_spaceship_right(Spaceship &my_spaceship);
+void move_spaceship_right(Spaceship &my_spaceship, int &map_size);
 void render_map(int &map_size, Spaceship &my_spaceship);
 
 char cell_to_string(int value);
@@ -96,7 +96,7 @@ void play_game(int &map_size, int &target_point){
             case 'a':
                 move_spaceship_left(my_spaceship); break;
             case 'd':
-                move_spaceship_right(my_spaceship); break;
+                move_spaceship_right(my_spaceship, map_size); break;
         }
         render_map(map_size, my_spaceship);
     }
@@ -104,10 +104,14 @@ void play_game(int &map_size, int &target_point){
 }
 
 void move_spaceship_left(Spaceship &my_spaceship){
-    my_spaceship.y--;
+    if (my_spaceship.y > 0){
+        my_spaceship.y--;
+    }
 }
-void move_spaceship_right(Spaceship &my_spaceship){
-    my_spaceship.y++;
+void move_spaceship_right(Spaceship &my_spaceship, int &map_size){
+    if (my_spaceship.y < map_size - 1){
+        my_spaceship.y++;
+    }
 }
 
 void render_map(int &map_size, Spaceship &my_spaceship){
@@ -115,6 +119,8 @@ void render_map(int &map_size, Spaceship &my_spaceship){
     
     map[my_spaceship.x][my_spaceship.y] = 1;
 
+
+    system("cls");
     for (int ifor = 0; ifor < map_size * 2; ifor++){
         if (ifor % 2 == 0){
             for (int j = 0; j < map_size; ++j) {
