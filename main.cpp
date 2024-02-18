@@ -29,7 +29,7 @@ struct Bullet{
     int y;
 };
 
-void menu();
+void start_game();
 int show_menu();
 void play_game(int &map_size, int &target_point);
 void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets);
@@ -40,10 +40,10 @@ char cell_to_string(int value);
 
 int main(){
 
-    menu();
+    start_game();
 }
 
-void menu(){
+void start_game(){
     int user_choice = show_menu();
 
     int map_size;
