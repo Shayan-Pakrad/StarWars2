@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 using namespace std;
 
@@ -23,13 +24,17 @@ struct Spaceship{
     int x;
     int y;
 };
+struct Bullet{
+    int x;
+    int y;
+};
 
 void menu();
 int show_menu();
 void play_game(int &map_size, int &target_point);
-void move_spaceship_left(Spaceship &my_spaceship);
-void move_spaceship_right(Spaceship &my_spaceship, int &map_size);
-void render_map(int &map_size, Spaceship &my_spaceship);
+void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets);
+void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet> &bullets);
+void render_map(int &map_size, Spaceship &my_spaceship, vector<Bullet> &bullets);
 
 char cell_to_string(int value);
 
@@ -86,7 +91,9 @@ void play_game(int &map_size, int &target_point){
     my_spaceship.x = map_size - 1;
     my_spaceship.y = (map_size - 1) / 2;
     
-    render_map(map_size, my_spaceship);
+    vector<Bullet> bullets;
+
+    render_map(map_size, my_spaceship, bullets);
     
     char spaceship_direction;
     while (true){
@@ -94,30 +101,54 @@ void play_game(int &map_size, int &target_point){
 
         switch (spaceship_direction){
             case 'a':
-                move_spaceship_left(my_spaceship); break;
+                move_spaceship_left(my_spaceship, bullets); break;
             case 'd':
-                move_spaceship_right(my_spaceship, map_size); break;
+                move_spaceship_right(my_spaceship, map_size, bullets); break;
         }
-        render_map(map_size, my_spaceship);
+        render_map(map_size, my_spaceship, bullets);
     }
     
 }
 
-void move_spaceship_left(Spaceship &my_spaceship){
+void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets){
     if (my_spaceship.y > 0){
         my_spaceship.y--;
+
+        Bullet new_bullet;
+        new_bullet.x = my_spaceship.x - 1;
+        new_bullet.y = my_spaceship.y;
+
+        for (Bullet &bullet : bullets){
+            bullet.x--;
+        }
+
+        bullets.push_back(new_bullet);
     }
 }
-void move_spaceship_right(Spaceship &my_spaceship, int &map_size){
+void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet> &bullets){
     if (my_spaceship.y < map_size - 1){
         my_spaceship.y++;
+        
+        Bullet new_bullet;
+        new_bullet.x = my_spaceship.x - 1;
+        new_bullet.y = my_spaceship.y;
+
+        for (Bullet &bullet : bullets){
+            bullet.x--;
+        }
+
+        bullets.push_back(new_bullet);
     }
 }
 
-void render_map(int &map_size, Spaceship &my_spaceship){
+void render_map(int &map_size, Spaceship &my_spaceship, vector<Bullet> &bullets){
     int map[map_size][map_size] = {};
     
     map[my_spaceship.x][my_spaceship.y] = 1;
+
+    for (Bullet &bullet : bullets){
+        map[bullet.x][bullet.y] = 2;
+    }
 
 
     system("cls");
