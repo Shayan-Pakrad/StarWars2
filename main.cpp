@@ -4,21 +4,12 @@
 
 using namespace std;
 
-struct Dart{
-    int heal = 1;
-    int size = 1;
-};
-struct Striker{
-    int heal = 2;
-    int size = 2;
-};
-struct Wraith{
-    int heal = 4;
-    int size = 3;
-};
-struct Banshee{
-    int heal = 6;
-    int size = 4;
+struct Enemy{
+    string name;
+    int x;
+    int y;
+    int heal;
+    int size;
 };
 struct Spaceship{
     int x;
@@ -87,8 +78,6 @@ int show_menu(){
 
 void play_game(int &map_size, int &target_point){
     
-    srand(time(0));
-
 
     Spaceship my_spaceship;
     vector<Bullet> bullets;
@@ -152,6 +141,27 @@ void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet>
         move_bullets(bullets);
 
         bullets.push_back(new_bullet);
+    }
+}
+
+Enemy create_enemy(){
+    
+    srand(time(0));
+
+    Enemy new_enemy;
+
+    int random_number = rand() % 4;
+
+    switch(random_number){
+        case 0:
+            new_enemy.name = "Dart";
+        case 1:
+            new_enemy.name = "Striker";
+        case 2:
+            new_enemy.name = "Wraith";
+        case 3:
+            new_enemy.name = "Banshee";
+            
     }
 }
 
