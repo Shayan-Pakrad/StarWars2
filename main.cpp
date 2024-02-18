@@ -31,6 +31,16 @@ int main(){
 
 }
 
+void show_menu(){
+    cout << "Menu:" << endl;
+    cout << " 1. start" << endl;
+    cout << " 2. load" << endl;
+    cout << " 3. exit" << endl;
+    int user_choice;
+    cin >> user_choice;
+    
+}
+
 void render(int &map_size){
 
     int map[map_size][map_size] = {};
