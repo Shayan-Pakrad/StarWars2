@@ -10,6 +10,7 @@ struct Enemy{
     int y;
     int heal;
     int size;
+    int point;
 };
 struct Spaceship{
     int x;
@@ -144,7 +145,7 @@ void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet>
     }
 }
 
-Enemy create_enemy(){
+Enemy create_enemy(int &map_size){
     
     srand(time(0));
 
@@ -155,12 +156,35 @@ Enemy create_enemy(){
     switch(random_number){
         case 0:
             new_enemy.name = "Dart";
+            new_enemy.size = 1;
+            new_enemy.heal = 1;
+            new_enemy.point = new_enemy.size * new_enemy.size;
+            new_enemy.x = 0;
+            new_enemy.y = rand() % map_size - new_enemy.size - 1;
+
         case 1:
             new_enemy.name = "Striker";
+            new_enemy.size = 2;
+            new_enemy.heal = 2;
+            new_enemy.point = new_enemy.size * new_enemy.size;
+            new_enemy.x = 0;
+            new_enemy.y = rand() % map_size - new_enemy.size - 1;
+
         case 2:
             new_enemy.name = "Wraith";
+            new_enemy.size = 3;
+            new_enemy.heal = 4;
+            new_enemy.point = new_enemy.size * new_enemy.size;
+            new_enemy.x = 0;
+            new_enemy.y = rand() % map_size - new_enemy.size - 1;
+
         case 3:
             new_enemy.name = "Banshee";
+            new_enemy.size = 4;
+            new_enemy.heal = 6;
+            new_enemy.point = new_enemy.size * new_enemy.size;
+            new_enemy.x = 0;
+            new_enemy.y = rand() % map_size - new_enemy.size - 1;
             
     }
 }
