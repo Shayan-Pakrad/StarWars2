@@ -148,7 +148,7 @@ void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet>
         move_bullets(bullets);
 
         enemy.x++;
-
+        
         bullets.push_back(new_bullet);
     }
 }
