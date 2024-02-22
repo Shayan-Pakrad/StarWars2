@@ -79,16 +79,13 @@ int show_menu(){
 
 void play_game(int &map_size, int &target_point){
     
-
     Spaceship my_spaceship;
     vector<Bullet> bullets;
 
     my_spaceship.x = map_size - 1;
     my_spaceship.y = (map_size - 1) / 2;
 
-    cout << "shayan" << endl;
     Enemy first_enemy = create_enemy(map_size);
-    cout << "shayan" << endl;
 
     render_map(map_size, my_spaceship, bullets, first_enemy);
     
@@ -148,8 +145,33 @@ void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet>
         move_bullets(bullets);
 
         enemy.x++;
-        
+
+
         bullets.push_back(new_bullet);
+
+        int index_indicator;
+
+        bool flag = true;
+
+        cout << enemy.x;
+        cout << enemy.y;
+
+        for (Bullet &bullet : bullets){
+            for (int i = enemy.x; i < enemy.x + enemy.size; i++){
+                for (int j = enemy.y; j < enemy.y + enemy.size; j++){
+                    if (bullet.x == enemy.x && bullet.y == enemy.y){
+                        enemy.heal--;
+                        bullets.erase(bullets.begin() + index_indicator);
+                        exit(0);
+                        flag = false;
+                    }
+                }
+            }
+            if (flag){
+                index_indicator++;
+            }
+            flag = true;
+        }
     }
 }
 
@@ -169,6 +191,7 @@ Enemy create_enemy(int &map_size){
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
             new_enemy.y = rand() % map_size - new_enemy.size - 1;
+            break;
 
         case 1:
             new_enemy.name = "Striker";
@@ -177,6 +200,7 @@ Enemy create_enemy(int &map_size){
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
             new_enemy.y = rand() % map_size - new_enemy.size - 1;
+            break;
 
         case 2:
             new_enemy.name = "Wraith";
@@ -185,6 +209,7 @@ Enemy create_enemy(int &map_size){
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
             new_enemy.y = rand() % map_size - new_enemy.size - 1;
+            break;
 
         case 3:
             new_enemy.name = "Banshee";
@@ -192,7 +217,8 @@ Enemy create_enemy(int &map_size){
             new_enemy.heal = 6;
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
-            new_enemy.y = rand() % map_size - new_enemy.size - 1;       
+            new_enemy.y = rand() % map_size - new_enemy.size - 1;   
+            break;    
     }
 
     return new_enemy;
@@ -215,6 +241,7 @@ void render_map(int &map_size, Spaceship &my_spaceship, vector<Bullet> &bullets,
 
 
     system("cls");
+    cout << enemy.heal << endl;
     for (int ifor = 0; ifor < map_size * 2; ifor++){
         if (ifor % 2 == 0){
             for (int j = 0; j < map_size; ++j) {
