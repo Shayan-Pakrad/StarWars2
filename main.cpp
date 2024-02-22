@@ -20,6 +20,13 @@ struct Bullet{
     int x;
     int y;
 };
+struct Game{
+    int map_size;
+    int target_point;
+    Spaceship spaceship;
+    Enemy enemy;
+    vector<Bullet> bullets;
+};
 
 void start_game();
 int show_menu();
