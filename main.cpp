@@ -30,12 +30,14 @@ struct Game{
 
 void start_game();
 int show_menu();
-void play_game(int &map_size, int &target_point);
+void init_new_game(Game &game);
+void play_game(Game &game);
 void move_bullets(vector<Bullet> &bullets);
-void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets, Enemy &enemy);
-void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet> &bullets, Enemy &enemy);
+void move_spaceship_left(Game &game);
+void move_spaceship_right(Game &game);
+void check_collision(Game &game);
 Enemy create_enemy(int &map_size);
-void render_map(int &map_size, Spaceship &my_spaceship, vector<Bullet> &bullets, Enemy &enemy);
+void render_map(Game &game);
 char cell_to_string(int value);
 
 int main(){
@@ -46,22 +48,22 @@ int main(){
 void start_game(){
     int user_choice = show_menu();
 
-    int map_size;
-    int target_point;
+    Game game;
     
     if (user_choice == 1){
 
         do{
             system("cls");
             cout << "enter the size of map = ";
-            cin >> map_size;
-        }while(map_size < 15);
+            cin >> game.map_size;
+        }while(game.map_size < 15);
 
         system("cls");
         cout << "enter the point = ";
-        cin >> target_point;
+        cin >> game.target_point;
 
-        play_game(map_size, target_point);   
+        init_new_game(game);
+        play_game(game);
     }
 
     else if (user_choice == 2){
@@ -84,17 +86,23 @@ int show_menu(){
     return user_choice;
 }
 
-void play_game(int &map_size, int &target_point){
+void init_new_game(Game &game){
+    game.spaceship.x = game.map_size - 1;
+    game.spaceship.y = (game.map_size - 1) / 2;
+    game.enemy = create_enemy(game.map_size);
+}
+
+void play_game(Game &game){
     
-    Spaceship my_spaceship;
-    vector<Bullet> bullets;
+    // Spaceship my_spaceship;
+    // vector<Bullet> bullets;
 
-    my_spaceship.x = map_size - 1;
-    my_spaceship.y = (map_size - 1) / 2;
+    // my_spaceship.x = map_size - 1;
+    // my_spaceship.y = (map_size - 1) / 2;
 
-    Enemy first_enemy = create_enemy(map_size);
+    // Enemy first_enemy = create_enemy(map_size);
 
-    render_map(map_size, my_spaceship, bullets, first_enemy);
+    render_map(game);
     
     char spaceship_direction;
     while (true){
@@ -102,11 +110,11 @@ void play_game(int &map_size, int &target_point){
 
         switch (spaceship_direction){
             case 'a':
-                move_spaceship_left(my_spaceship, bullets, first_enemy); break;
+                move_spaceship_left(game); break;
             case 'd':
-                move_spaceship_right(my_spaceship, map_size, bullets, first_enemy); break;
+                move_spaceship_right(game); break;
         }
-        render_map(map_size, my_spaceship, bullets, first_enemy);
+        render_map(game);
     }
     
 }
@@ -125,50 +133,60 @@ void move_bullets(vector<Bullet> &bullets){
     }
 }
 
-
-void move_spaceship_left(Spaceship &my_spaceship, vector<Bullet> &bullets, Enemy &enemy){
-    if (my_spaceship.y > 0){
-        my_spaceship.y--;
+void move_spaceship_left(Game &game){
+    if (game.spaceship.y > 0){
+        game.spaceship.y--;
 
         Bullet new_bullet;
-        new_bullet.x = my_spaceship.x - 1;
-        new_bullet.y = my_spaceship.y;
+        new_bullet.x = game.spaceship.x - 1;
+        new_bullet.y = game.spaceship.y;
 
-        move_bullets(bullets);
+        move_bullets(game.bullets);
 
-        enemy.x++;
+        game.enemy.x++;
 
-        bullets.push_back(new_bullet);
+        game.bullets.push_back(new_bullet);
+
+        check_collision(game);
     }
 }
-void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet> &bullets, Enemy &enemy){
-    if (my_spaceship.y < map_size - 1){
-        my_spaceship.y++;
+void move_spaceship_right(Game &game){
+
+    if (game.spaceship.y < game.map_size - 1){
+        game.spaceship.y++;
         
         Bullet new_bullet;
-        new_bullet.x = my_spaceship.x - 1;
-        new_bullet.y = my_spaceship.y;
+        new_bullet.x = game.spaceship.x - 1;
+        new_bullet.y = game.spaceship.y;
 
-        move_bullets(bullets);
+        move_bullets(game.bullets);
 
-        enemy.x++;
+        game.enemy.x++;
+
+        game.bullets.push_back(new_bullet);
 
 
-        bullets.push_back(new_bullet);
+        // cout << enemy.x;
+        // cout << enemy.y;
 
-        int index_indicator;
+        check_collision(game);
+        
+    }
+}
 
-        bool flag = true;
+void check_collision(Game &game){
 
-        cout << enemy.x;
-        cout << enemy.y;
+    int index_indicator;
 
-        for (Bullet &bullet : bullets){
-            for (int i = enemy.x; i < enemy.x + enemy.size; i++){
-                for (int j = enemy.y; j < enemy.y + enemy.size; j++){
-                    if (bullet.x == enemy.x && bullet.y == enemy.y){
-                        enemy.heal--;
-                        bullets.erase(bullets.begin() + index_indicator);
+
+    bool flag = true;
+
+    for (Bullet &bullet : game.bullets){
+            for (int i = game.enemy.x; i < game.enemy.x + game.enemy.size; i++){
+                for (int j = game.enemy.y; j < game.enemy.y + game.enemy.size; j++){
+                    if (bullet.x == game.enemy.x && bullet.y == game.enemy.y){
+                        game.enemy.heal--;
+                        game.bullets.erase(game.bullets.begin() + index_indicator);
                         exit(0);
                         flag = false;
                     }
@@ -180,7 +198,7 @@ void move_spaceship_right(Spaceship &my_spaceship, int &map_size, vector<Bullet>
             flag = true;
         }
     }
-}
+
 
 Enemy create_enemy(int &map_size){
     
@@ -231,27 +249,33 @@ Enemy create_enemy(int &map_size){
     return new_enemy;
 }
 
-void render_map(int &map_size, Spaceship &my_spaceship, vector<Bullet> &bullets, Enemy &enemy){
-    int map[map_size][map_size] = {};
-    
-    map[my_spaceship.x][my_spaceship.y] = 1;
+void render_map(Game &game){
+    int map[game.map_size][game.map_size] = {};
 
-    for (Bullet &bullet : bullets){
+    
+    
+    map[game.spaceship.x][game.spaceship.y] = 1;
+
+    for (Bullet &bullet : game.bullets){
         map[bullet.x][bullet.y] = 2;
     }
 
-    for (int i = enemy.x; i < enemy.x + enemy.size; i++){
-        for (int j = enemy.y; j < enemy.y + enemy.size; j++){
+    for (int i = game.enemy.x; i < game.enemy.x + game.enemy.size; i++){
+        for (int j = game.enemy.y; j < game.enemy.y + game.enemy.size; j++){
             map[i][j] = 3;
         }
     }
 
 
     system("cls");
-    cout << enemy.heal << endl;
-    for (int ifor = 0; ifor < map_size * 2; ifor++){
+    cout << game.spaceship.x;
+    cout << game.spaceship.y;
+    cout << "shayan";
+    cout << game.map_size;
+    cout << game.enemy.heal << endl;
+    for (int ifor = 0; ifor < game.map_size * 2; ifor++){
         if (ifor % 2 == 0){
-            for (int j = 0; j < map_size; ++j) {
+            for (int j = 0; j < game.map_size; ++j) {
                 cout << " ---";
             }
             cout << endl;
@@ -259,14 +283,14 @@ void render_map(int &map_size, Spaceship &my_spaceship, vector<Bullet> &bullets,
         }
 
         int i = ifor / 2;
-        for (int j = 0; j < map_size; j++){
+        for (int j = 0; j < game.map_size; j++){
             cout << "| " << cell_to_string(map[i][j]) << " ";
         }
 
         cout << "|" << endl;
     }
 
-    for (int j = 0; j < map_size; j++){
+    for (int j = 0; j < game.map_size; j++){
         cout << " ---";
     }
     cout << endl;
