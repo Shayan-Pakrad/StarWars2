@@ -94,14 +94,6 @@ void init_new_game(Game &game){
 
 void play_game(Game &game){
     
-    // Spaceship my_spaceship;
-    // vector<Bullet> bullets;
-
-    // my_spaceship.x = map_size - 1;
-    // my_spaceship.y = (map_size - 1) / 2;
-
-    // Enemy first_enemy = create_enemy(map_size);
-
     render_map(game);
     
     char spaceship_direction;
@@ -121,16 +113,16 @@ void play_game(Game &game){
 
 void move_bullets(vector<Bullet> &bullets){
 
-    int index_indicator = 0;
+    int bullets_size = bullets.size();
 
-    for (Bullet &bullet : bullets){
-        bullet.x--;
+    for (int i = 0;  i < bullets_size - 1; i++){
+        bullets[i].x--;
 
-        if (bullet.x < -2){
-            bullets.erase(bullets.begin() + index_indicator); continue;
+        if (bullets[i].x < 8){
+            bullets.erase(bullets.begin() + i);
         }
-        index_indicator++;
     }
+    
 }
 
 void move_spaceship_left(Game &game){
@@ -141,11 +133,11 @@ void move_spaceship_left(Game &game){
         new_bullet.x = game.spaceship.x - 1;
         new_bullet.y = game.spaceship.y;
 
-        move_bullets(game.bullets);
-
         game.enemy.x++;
 
         game.bullets.push_back(new_bullet);
+
+        move_bullets(game.bullets);
 
         check_collision(game);
     }
@@ -159,11 +151,11 @@ void move_spaceship_right(Game &game){
         new_bullet.x = game.spaceship.x - 1;
         new_bullet.y = game.spaceship.y;
 
-        move_bullets(game.bullets);
-
         game.enemy.x++;
 
         game.bullets.push_back(new_bullet);
+
+        move_bullets(game.bullets);
 
         check_collision(game);
         
