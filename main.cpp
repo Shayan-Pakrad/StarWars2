@@ -126,7 +126,7 @@ void move_bullets(vector<Bullet> &bullets){
     for (Bullet &bullet : bullets){
         bullet.x--;
 
-        if (bullet.x < 0){
+        if (bullet.x < -2){
             bullets.erase(bullets.begin() + index_indicator); continue;
         }
         index_indicator++;
@@ -165,40 +165,29 @@ void move_spaceship_right(Game &game){
 
         game.bullets.push_back(new_bullet);
 
-
-        // cout << enemy.x;
-        // cout << enemy.y;
-
         check_collision(game);
+        
         
     }
 }
 
 void check_collision(Game &game){
 
-    int index_indicator;
+    int bullets_size = game.bullets.size();
 
-
-    bool flag = true;
-
-    for (Bullet &bullet : game.bullets){
-            for (int i = game.enemy.x; i < game.enemy.x + game.enemy.size; i++){
-                for (int j = game.enemy.y; j < game.enemy.y + game.enemy.size; j++){
-                    if (bullet.x == game.enemy.x && bullet.y == game.enemy.y){
-                        game.enemy.heal--;
-                        game.bullets.erase(game.bullets.begin() + index_indicator);
-                        exit(0);
-                        flag = false;
-                    }
+    for (int i = 0;  i < bullets_size - 1; i++) {
+        for (int x = game.enemy.x - 1; x < game.enemy.x + game.enemy.size; x++){
+            for (int y = game.enemy.y; y < game.enemy.y + game.enemy.size; y++){
+                if (game.bullets[i].x == x && game.bullets[i].y == y){
+                    game.enemy.heal--;
+                    game.bullets.erase(game.bullets.begin() + i);
+                    i--;
                 }
             }
-            if (flag){
-                index_indicator++;
-            }
-            flag = true;
         }
     }
 
+}
 
 Enemy create_enemy(int &map_size){
     
@@ -268,10 +257,7 @@ void render_map(Game &game){
 
 
     system("cls");
-    cout << game.spaceship.x;
-    cout << game.spaceship.y;
-    cout << "shayan";
-    cout << game.map_size;
+    
     cout << game.enemy.heal << endl;
     for (int ifor = 0; ifor < game.map_size * 2; ifor++){
         if (ifor % 2 == 0){
