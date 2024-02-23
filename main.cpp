@@ -1,5 +1,5 @@
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <vector>
 
 using namespace std;
@@ -15,6 +15,7 @@ struct Enemy{
 struct Spaceship{
     int x;
     int y;
+    int heal;
 };
 struct Bullet{
     int x;
@@ -36,7 +37,8 @@ void move_bullets(vector<Bullet> &bullets);
 void move_spaceship_left(Game &game);
 void move_spaceship_right(Game &game);
 void move_spaceship_down(Game &game);
-void check_collision(Game &game);
+void check_bullet_enemy_collision(Game &game);
+bool check_spaceship_enemy_collision(Game &game);
 Enemy create_enemy(int &map_size);
 void render_map(Game &game);
 char cell_to_string(int value);
@@ -90,6 +92,7 @@ int show_menu(){
 void init_new_game(Game &game){
     game.spaceship.x = game.map_size - 1;
     game.spaceship.y = (game.map_size - 1) / 2;
+    game.spaceship.heal = 3;
     game.enemy = create_enemy(game.map_size);
 }
 
@@ -123,6 +126,8 @@ void move_bullets(vector<Bullet> &bullets){
 
         if (bullets[i].x < 0){
             bullets.erase(bullets.begin() + i);
+            i--;
+            bullets_size--;
         }
     }
     
@@ -130,7 +135,13 @@ void move_bullets(vector<Bullet> &bullets){
 
 void move_spaceship_left(Game &game){
     if (game.spaceship.y > 0){
+
         game.spaceship.y--;
+
+        if (check_spaceship_enemy_collision(game)){
+            game.spaceship.y++;
+            return;
+        }
 
         Bullet new_bullet;
         new_bullet.x = game.spaceship.x - 1;
@@ -143,13 +154,19 @@ void move_spaceship_left(Game &game){
 
         game.bullets.push_back(new_bullet);
 
-        check_collision(game);
+        check_bullet_enemy_collision(game);
     }
 }
 void move_spaceship_right(Game &game){
 
     if (game.spaceship.y < game.map_size - 1){
+        
         game.spaceship.y++;
+
+        if (check_spaceship_enemy_collision(game)){
+            game.spaceship.y--;
+            return;
+        }
         
         Bullet new_bullet;
         new_bullet.x = game.spaceship.x - 1;
@@ -157,18 +174,21 @@ void move_spaceship_right(Game &game){
 
         game.enemy.x++;
 
-
         move_bullets(game.bullets);
 
-         game.bullets.push_back(new_bullet);
+        game.bullets.push_back(new_bullet);
 
-        check_collision(game);
+        check_bullet_enemy_collision(game);
         
         
     }
 }
 
 void move_spaceship_down(Game &game){
+
+    if (check_spaceship_enemy_collision(game)){
+        return;
+    }
     Bullet new_bullet;
     new_bullet.x = game.spaceship.x - 1;
     new_bullet.y = game.spaceship.y;
@@ -180,10 +200,10 @@ void move_spaceship_down(Game &game){
 
     game.bullets.push_back(new_bullet);
 
-    check_collision(game);
+    check_bullet_enemy_collision(game);
 }
 
-void check_collision(Game &game){
+void check_bullet_enemy_collision(Game &game){
 
     int bullets_size = game.bullets.size();
 
@@ -194,6 +214,7 @@ void check_collision(Game &game){
                     game.enemy.heal--;
                     game.bullets.erase(game.bullets.begin() + i);
                     i--;
+                    bullets_size--;
                 }
             }
         }
@@ -203,6 +224,20 @@ void check_collision(Game &game){
         game.enemy = create_enemy(game.map_size);
     }
 
+}
+
+bool check_spaceship_enemy_collision(Game &game){
+
+    for (int x = game.enemy.x - 1; x <= game.enemy.x + game.enemy.size; x++){
+        for (int y = game.enemy.y; y < game.enemy.y + game.enemy.size; y++){
+            if (game.spaceship.x == x && game.spaceship.y == y){
+                game.spaceship.heal--;
+                game.enemy = create_enemy(game.map_size);
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 Enemy create_enemy(int &map_size){
@@ -275,6 +310,7 @@ void render_map(Game &game){
     system("cls");
     
     cout << game.enemy.heal << endl;
+    cout << game.spaceship.heal << endl;
     for (int ifor = 0; ifor < game.map_size * 2; ifor++){
         if (ifor % 2 == 0){
             for (int j = 0; j < game.map_size; ++j) {
