@@ -115,10 +115,10 @@ void move_bullets(vector<Bullet> &bullets){
 
     int bullets_size = bullets.size();
 
-    for (int i = 0;  i < bullets_size - 1; i++){
+    for (int i = 0;  i < bullets_size; i++){
         bullets[i].x--;
 
-        if (bullets[i].x < 8){
+        if (bullets[i].x < 0){
             bullets.erase(bullets.begin() + i);
         }
     }
@@ -135,9 +135,10 @@ void move_spaceship_left(Game &game){
 
         game.enemy.x++;
 
-        game.bullets.push_back(new_bullet);
 
         move_bullets(game.bullets);
+
+        game.bullets.push_back(new_bullet);
 
         check_collision(game);
     }
@@ -153,9 +154,10 @@ void move_spaceship_right(Game &game){
 
         game.enemy.x++;
 
-        game.bullets.push_back(new_bullet);
 
         move_bullets(game.bullets);
+
+         game.bullets.push_back(new_bullet);
 
         check_collision(game);
         
@@ -179,6 +181,10 @@ void check_collision(Game &game){
         }
     }
 
+    if (game.enemy.heal <= 0){
+        game.enemy = create_enemy(game.map_size);
+    }
+
 }
 
 Enemy create_enemy(int &map_size){
@@ -196,7 +202,7 @@ Enemy create_enemy(int &map_size){
             new_enemy.heal = 1;
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
-            new_enemy.y = rand() % map_size - new_enemy.size - 1;
+            new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
 
         case 1:
@@ -205,7 +211,7 @@ Enemy create_enemy(int &map_size){
             new_enemy.heal = 2;
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
-            new_enemy.y = rand() % map_size - new_enemy.size - 1;
+            new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
 
         case 2:
@@ -214,7 +220,7 @@ Enemy create_enemy(int &map_size){
             new_enemy.heal = 4;
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
-            new_enemy.y = rand() % map_size - new_enemy.size - 1;
+            new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
 
         case 3:
@@ -223,7 +229,7 @@ Enemy create_enemy(int &map_size){
             new_enemy.heal = 6;
             new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
-            new_enemy.y = rand() % map_size - new_enemy.size - 1;   
+            new_enemy.y = rand() % (map_size - new_enemy.size - 1);   
             break;    
     }
 
