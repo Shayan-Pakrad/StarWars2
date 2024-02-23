@@ -23,6 +23,7 @@ struct Bullet{
 };
 struct Game{
     int map_size;
+    int point;
     int target_point;
     Spaceship spaceship;
     Enemy enemy;
@@ -45,6 +46,7 @@ void render_map(Game &game);
 char cell_to_string(int value);
 void check_spaceship_heal(int &spaceship_heal);
 void game_over();
+void check_points(Game &game);
 
 
 int main(){
@@ -147,6 +149,8 @@ void move_spaceship_left(Game &game){
         check_enemy_border_collision(game);
 
         check_spaceship_heal(game.spaceship.heal);
+
+        check_points(game);
     }
 }
 void move_spaceship_right(Game &game){
@@ -175,6 +179,8 @@ void move_spaceship_right(Game &game){
         check_enemy_border_collision(game);
 
         check_spaceship_heal(game.spaceship.heal);
+
+        check_points(game);
         
     }
 }
@@ -200,6 +206,8 @@ void move_spaceship_down(Game &game){
     check_enemy_border_collision(game);
 
     check_spaceship_heal(game.spaceship.heal);
+
+    check_points(game);
 
 }
 
@@ -237,6 +245,7 @@ void check_bullet_enemy_collision(Game &game){
     }
 
     if (game.enemy.heal <= 0){
+        game.point += (game.enemy.size * game.enemy.size) * 2;
         game.enemy = create_enemy(game.map_size);
     }
 
@@ -269,6 +278,30 @@ void check_spaceship_heal(int &spaceship_heal){
         game_over();
     }
 
+}
+
+void check_points(Game &game){
+    if (game.point >= game.target_point){
+        system("cls");
+        cout << endl << "You reached your target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
+        
+        int new_target_point;
+        cin >> new_target_point;
+
+        if (new_target_point <= game.point){
+            do{
+                if(new_target_point == 0){
+                    exit(0);
+                }
+                system("cls");
+                cout << endl << "Enter a higher target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
+                cin >> new_target_point;
+            }while(new_target_point > game.point);
+        }
+
+        game.target_point = new_target_point;
+
+    }
 }
 
 Enemy create_enemy(int &map_size){
@@ -339,7 +372,8 @@ void render_map(Game &game){
 
 
     system("cls");
-    
+
+    cout << game.point << endl;
     cout << game.enemy.heal << endl;
     cout << game.spaceship.heal << endl;
     for (int ifor = 0; ifor < game.map_size * 2; ifor++){
