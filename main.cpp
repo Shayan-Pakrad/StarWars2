@@ -35,6 +35,7 @@ void play_game(Game &game);
 void move_bullets(vector<Bullet> &bullets);
 void move_spaceship_left(Game &game);
 void move_spaceship_right(Game &game);
+void move_spaceship_down(Game &game);
 void check_collision(Game &game);
 Enemy create_enemy(int &map_size);
 void render_map(Game &game);
@@ -105,6 +106,8 @@ void play_game(Game &game){
                 move_spaceship_left(game); break;
             case 'd':
                 move_spaceship_right(game); break;
+            case 's':
+                move_spaceship_down(game); break;
         }
         render_map(game);
     }
@@ -163,6 +166,21 @@ void move_spaceship_right(Game &game){
         
         
     }
+}
+
+void move_spaceship_down(Game &game){
+    Bullet new_bullet;
+    new_bullet.x = game.spaceship.x - 1;
+    new_bullet.y = game.spaceship.y;
+
+    game.enemy.x++;
+
+
+    move_bullets(game.bullets);
+
+    game.bullets.push_back(new_bullet);
+
+    check_collision(game);
 }
 
 void check_collision(Game &game){
