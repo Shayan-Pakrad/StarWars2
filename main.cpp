@@ -43,6 +43,9 @@ void check_enemy_border_collision(Game &game);
 Enemy create_enemy(int &map_size);
 void render_map(Game &game);
 char cell_to_string(int value);
+void check_spaceship_heal(int &spaceship_heal);
+void game_over();
+
 
 int main(){
 
@@ -142,6 +145,8 @@ void move_spaceship_left(Game &game){
         check_bullet_enemy_collision(game);
 
         check_enemy_border_collision(game);
+
+        check_spaceship_heal(game.spaceship.heal);
     }
 }
 void move_spaceship_right(Game &game){
@@ -168,6 +173,8 @@ void move_spaceship_right(Game &game){
         check_bullet_enemy_collision(game);
 
         check_enemy_border_collision(game);
+
+        check_spaceship_heal(game.spaceship.heal);
         
     }
 }
@@ -191,6 +198,8 @@ void move_spaceship_down(Game &game){
     check_bullet_enemy_collision(game);
 
     check_enemy_border_collision(game);
+
+    check_spaceship_heal(game.spaceship.heal);
 
 }
 
@@ -252,6 +261,14 @@ void check_enemy_border_collision(Game &game){
         game.spaceship.heal--;
         game.enemy = create_enemy(game.map_size);
     }
+}
+
+void check_spaceship_heal(int &spaceship_heal){
+
+    if (spaceship_heal <= 0){
+        game_over();
+    }
+
 }
 
 Enemy create_enemy(int &map_size){
@@ -373,4 +390,10 @@ void game_over(){
     system("cls");
 
     cout << "Game Over";
+
+    char game_over;
+
+    cin >> game_over;
+
+    exit(0);
 }
