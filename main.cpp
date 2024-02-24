@@ -57,6 +57,8 @@ int main(){
 }
 
 void start_game(){
+    system("cls");
+    
     int user_choice = show_menu();
 
     Game game;
@@ -122,6 +124,8 @@ void play_game(Game &game){
                 move_spaceship_right(game); break;
             case 's':
                 move_spaceship_down(game); break;
+            case 'm':
+                start_game(); break;
         }
         render_map(game);
     }
