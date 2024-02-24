@@ -356,6 +356,35 @@ void save_game(Game &game){
 
 }
 
+void load_game(Game &game){
+    ifstream fin("game.txt");
+
+    fin >> game.enemy.name;
+    fin >> game.enemy.x;
+    fin >> game.enemy.y;
+    fin >> game.enemy.health;
+    fin >> game.enemy.size;
+
+    fin >> game.spaceship.x;
+    fin >> game.spaceship.y;
+    fin >> game.spaceship.health;
+
+    fin >> game.map_size;
+    fin >> game.point;
+    fin >> game.target_point;
+
+    int num_of_bullets;
+
+    fin >> num_of_bullets;
+
+    for (int i = 0; i < num_of_bullets; i++){
+        fin >> game.bullets[i].x;
+        fin >> game.bullets[i].y;
+    }
+
+    fin.close();
+}
+
 Enemy create_enemy(int &map_size){
     
     srand(time(0));
