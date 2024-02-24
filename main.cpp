@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -10,7 +11,6 @@ struct Enemy{
     int y;
     int heal;
     int size;
-    int point;
 };
 struct Spaceship{
     int x;
@@ -47,6 +47,7 @@ char cell_to_string(int value);
 void check_spaceship_heal(int &spaceship_heal);
 void game_over();
 void check_points(Game &game);
+void save_game(Game &game);
 
 
 int main(){
@@ -100,6 +101,7 @@ void init_new_game(Game &game){
     game.spaceship.y = (game.map_size - 1) / 2;
     game.spaceship.heal = 3;
     game.enemy = create_enemy(game.map_size);
+    game.point = 0;
 }
 
 void play_game(Game &game){
@@ -151,6 +153,8 @@ void move_spaceship_left(Game &game){
         check_spaceship_heal(game.spaceship.heal);
 
         check_points(game);
+
+        save_game(game);
     }
 }
 void move_spaceship_right(Game &game){
@@ -181,6 +185,8 @@ void move_spaceship_right(Game &game){
         check_spaceship_heal(game.spaceship.heal);
 
         check_points(game);
+
+        save_game(game);
         
     }
 }
@@ -208,6 +214,8 @@ void move_spaceship_down(Game &game){
     check_spaceship_heal(game.spaceship.heal);
 
     check_points(game);
+
+    save_game(game);
 
 }
 
@@ -304,6 +312,51 @@ void check_points(Game &game){
     }
 }
 
+void save_game(Game &game){
+    /* saved file format:
+        enemy.name
+        enemy.x
+        enemy.y
+        enemy.heal
+        enemy.size
+        spaceship.x
+        spaceship.y
+        spaceship.heal
+        game.map_size
+        game.point
+        game.target_point
+        numbers of bullets
+        bullet.x
+        bullet.y
+        ...
+    */
+    ofstream fout("game.txt");
+
+    fout << game.enemy.name << endl;
+    fout << game.enemy.x << endl;
+    fout << game.enemy.y << endl;
+    fout << game.enemy.heal << endl;
+    fout << game.enemy.size << endl;
+
+    fout << game.spaceship.x << endl;
+    fout << game.spaceship.y << endl;
+    fout << game.spaceship.heal << endl;
+
+    fout << game.map_size << endl;
+    fout << game.point << endl;
+    fout << game.target_point << endl;
+
+    fout << game.bullets.size() << endl;
+
+    for (int i = 0; i < game.bullets.size(); i++){
+        fout << game.bullets[i].x << endl;
+        fout << game.bullets[i].y << endl;
+    }
+
+    fout.close();
+
+}
+
 Enemy create_enemy(int &map_size){
     
     srand(time(0));
@@ -317,7 +370,6 @@ Enemy create_enemy(int &map_size){
             new_enemy.name = "Dart";
             new_enemy.size = 1;
             new_enemy.heal = 1;
-            new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
@@ -326,7 +378,6 @@ Enemy create_enemy(int &map_size){
             new_enemy.name = "Striker";
             new_enemy.size = 2;
             new_enemy.heal = 2;
-            new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
@@ -335,7 +386,6 @@ Enemy create_enemy(int &map_size){
             new_enemy.name = "Wraith";
             new_enemy.size = 3;
             new_enemy.heal = 4;
-            new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
@@ -344,10 +394,9 @@ Enemy create_enemy(int &map_size){
             new_enemy.name = "Banshee";
             new_enemy.size = 4;
             new_enemy.heal = 6;
-            new_enemy.point = new_enemy.size * new_enemy.size;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);   
-            break;    
+            break;
     }
 
     return new_enemy;
