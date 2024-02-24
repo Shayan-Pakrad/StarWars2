@@ -291,20 +291,19 @@ void check_spaceship_heal(int &spaceship_heal){
 void check_points(Game &game){
     if (game.point >= game.target_point){
         system("cls");
-        cout << endl << "You reached your target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
+        cout << "You scored : " << game.point << endl;
+        cout << "Your previous target point : "<< game.target_point << endl << endl;
+        cout << "You reached your target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
         
         int new_target_point;
         cin >> new_target_point;
 
-        if (new_target_point <= game.point){
-            do{
-                if(new_target_point == 0){
-                    exit(0);
-                }
-                system("cls");
-                cout << endl << "Enter a higher target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
-                cin >> new_target_point;
-            }while(new_target_point > game.point);
+        while (new_target_point < game.point + 1){
+            system("cls");
+            cout << "You scored : " << game.point << endl;
+            cout << "Your previous target point : "<< game.target_point << endl << endl;
+            cout << "Enter a higher target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
+            cin >> new_target_point;
         }
 
         game.target_point = new_target_point;
