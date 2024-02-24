@@ -48,6 +48,7 @@ void check_spaceship_health(int &spaceship_health);
 void game_over();
 void check_points(Game &game);
 void save_game(Game &game);
+void load_game(Game &game);
 
 
 int main(){
@@ -77,6 +78,8 @@ void start_game(){
     }
 
     else if (user_choice == 2){
+        load_game(game);
+        play_game(game);
 
     }
 
@@ -377,9 +380,12 @@ void load_game(Game &game){
 
     fin >> num_of_bullets;
 
+    Bullet bullet;
     for (int i = 0; i < num_of_bullets; i++){
-        fin >> game.bullets[i].x;
-        fin >> game.bullets[i].y;
+        fin >> bullet.x;
+        fin >> bullet.y;
+
+        game.bullets.push_back(bullet);
     }
 
     fin.close();
