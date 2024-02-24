@@ -421,6 +421,13 @@ void render_map(Game &game){
 
     system("cls");
 
+    // showing informations above map
+
+    cout << endl << "map size: " << game.map_size;
+    cout << "  spaceship health: " << game.spaceship.health;
+    cout << "  enemy health: " << game.enemy.health;
+    cout << "  score: " << game.point;
+    cout << "  target point: " << game.target_point << endl << endl;
 
     for (int ifor = 0; ifor < game.map_size * 2; ifor++){
         if (ifor % 2 == 0){
