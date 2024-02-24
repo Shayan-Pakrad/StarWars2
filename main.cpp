@@ -9,13 +9,13 @@ struct Enemy{
     string name;
     int x;
     int y;
-    int heal;
+    int health;
     int size;
 };
 struct Spaceship{
     int x;
     int y;
-    int heal;
+    int health;
 };
 struct Bullet{
     int x;
@@ -44,7 +44,7 @@ void check_enemy_border_collision(Game &game);
 Enemy create_enemy(int &map_size);
 void render_map(Game &game);
 char cell_to_string(int value);
-void check_spaceship_heal(int &spaceship_heal);
+void check_spaceship_health(int &spaceship_health);
 void game_over();
 void check_points(Game &game);
 void save_game(Game &game);
@@ -99,7 +99,7 @@ int show_menu(){
 void init_new_game(Game &game){
     game.spaceship.x = game.map_size - 1;
     game.spaceship.y = (game.map_size - 1) / 2;
-    game.spaceship.heal = 3;
+    game.spaceship.health = 3;
     game.enemy = create_enemy(game.map_size);
     game.point = 0;
 }
@@ -150,7 +150,7 @@ void move_spaceship_left(Game &game){
 
         check_enemy_border_collision(game);
 
-        check_spaceship_heal(game.spaceship.heal);
+        check_spaceship_health(game.spaceship.health);
 
         check_points(game);
 
@@ -182,7 +182,7 @@ void move_spaceship_right(Game &game){
 
         check_enemy_border_collision(game);
 
-        check_spaceship_heal(game.spaceship.heal);
+        check_spaceship_health(game.spaceship.health);
 
         check_points(game);
 
@@ -211,7 +211,7 @@ void move_spaceship_down(Game &game){
 
     check_enemy_border_collision(game);
 
-    check_spaceship_heal(game.spaceship.heal);
+    check_spaceship_health(game.spaceship.health);
 
     check_points(game);
 
@@ -243,7 +243,7 @@ void check_bullet_enemy_collision(Game &game){
         for (int x = game.enemy.x - 1; x < game.enemy.x + game.enemy.size; x++){
             for (int y = game.enemy.y; y < game.enemy.y + game.enemy.size; y++){
                 if (game.bullets[i].x == x && game.bullets[i].y == y){
-                    game.enemy.heal--;
+                    game.enemy.health--;
                     game.bullets.erase(game.bullets.begin() + i);
                     i--;
                     bullets_size--;
@@ -252,7 +252,7 @@ void check_bullet_enemy_collision(Game &game){
         }
     }
 
-    if (game.enemy.heal <= 0){
+    if (game.enemy.health <= 0){
         game.point += (game.enemy.size * game.enemy.size) * 2;
         game.enemy = create_enemy(game.map_size);
     }
@@ -264,7 +264,7 @@ bool check_spaceship_enemy_collision(Game &game){
     for (int x = game.enemy.x - 1; x <= game.enemy.x + game.enemy.size; x++){
         for (int y = game.enemy.y; y < game.enemy.y + game.enemy.size; y++){
             if (game.spaceship.x == x && game.spaceship.y == y){
-                game.spaceship.heal--;
+                game.spaceship.health--;
                 game.enemy = create_enemy(game.map_size);
                 return true;
             }
@@ -275,14 +275,14 @@ bool check_spaceship_enemy_collision(Game &game){
 
 void check_enemy_border_collision(Game &game){
     if(game.enemy.x + game.enemy.size >= game.map_size){
-        game.spaceship.heal--;
+        game.spaceship.health--;
         game.enemy = create_enemy(game.map_size);
     }
 }
 
-void check_spaceship_heal(int &spaceship_heal){
+void check_spaceship_health(int &spaceship_health){
 
-    if (spaceship_heal <= 0){
+    if (spaceship_health <= 0){
         game_over();
     }
 
@@ -316,11 +316,11 @@ void save_game(Game &game){
         enemy.name
         enemy.x
         enemy.y
-        enemy.heal
+        enemy.health
         enemy.size
         spaceship.x
         spaceship.y
-        spaceship.heal
+        spaceship.health
         game.map_size
         game.point
         game.target_point
@@ -334,12 +334,12 @@ void save_game(Game &game){
     fout << game.enemy.name << endl;
     fout << game.enemy.x << endl;
     fout << game.enemy.y << endl;
-    fout << game.enemy.heal << endl;
+    fout << game.enemy.health << endl;
     fout << game.enemy.size << endl;
 
     fout << game.spaceship.x << endl;
     fout << game.spaceship.y << endl;
-    fout << game.spaceship.heal << endl;
+    fout << game.spaceship.health << endl;
 
     fout << game.map_size << endl;
     fout << game.point << endl;
@@ -368,7 +368,7 @@ Enemy create_enemy(int &map_size){
         case 0:
             new_enemy.name = "Dart";
             new_enemy.size = 1;
-            new_enemy.heal = 1;
+            new_enemy.health = 1;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
@@ -376,7 +376,7 @@ Enemy create_enemy(int &map_size){
         case 1:
             new_enemy.name = "Striker";
             new_enemy.size = 2;
-            new_enemy.heal = 2;
+            new_enemy.health = 2;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
@@ -384,7 +384,7 @@ Enemy create_enemy(int &map_size){
         case 2:
             new_enemy.name = "Wraith";
             new_enemy.size = 3;
-            new_enemy.heal = 4;
+            new_enemy.health = 4;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);
             break;
@@ -392,7 +392,7 @@ Enemy create_enemy(int &map_size){
         case 3:
             new_enemy.name = "Banshee";
             new_enemy.size = 4;
-            new_enemy.heal = 6;
+            new_enemy.health = 6;
             new_enemy.x = 0;
             new_enemy.y = rand() % (map_size - new_enemy.size - 1);   
             break;
@@ -421,9 +421,7 @@ void render_map(Game &game){
 
     system("cls");
 
-    cout << game.point << endl;
-    cout << game.enemy.heal << endl;
-    cout << game.spaceship.heal << endl;
+
     for (int ifor = 0; ifor < game.map_size * 2; ifor++){
         if (ifor % 2 == 0){
             for (int j = 0; j < game.map_size; ++j) {
