@@ -3,6 +3,12 @@
 #include <vector>
 #include <fstream>
 
+//defining colors
+
+#define BULLET "\033[31m^\033[0m"
+#define SPACESHIP "\033[33m#\033[0m"
+#define ENEMY "\033[36m*\033[0m"
+
 using namespace std;
 
 struct Enemy{
@@ -43,7 +49,7 @@ bool check_spaceship_enemy_collision(Game &game);
 void check_enemy_border_collision(Game &game);
 Enemy create_enemy(int &map_size);
 void render_map(Game &game);
-char cell_to_string(int value);
+string cell_to_string(int value);
 void check_spaceship_health(int &spaceship_health);
 void game_over();
 void check_points(Game &game);
@@ -468,6 +474,8 @@ void render_map(Game &game){
     cout << "  score: " << game.point;
     cout << "  target point: " << game.target_point << endl << endl;
 
+    // rendering map
+
     for (int ifor = 0; ifor < game.map_size * 2; ifor++){
         if (ifor % 2 == 0){
             for (int j = 0; j < game.map_size; ++j) {
@@ -489,22 +497,27 @@ void render_map(Game &game){
         cout << " ---";
     }
     cout << endl;
+
+    //showing game tips
+
+    cout << "a: move left, d: move right, s: just fire, m: show menu";
+    cout << endl;
 }
 
-char cell_to_string(int value){
-    char cell;
+string cell_to_string(int value){
+    string cell;
     switch (value){
         case 0:
-            cell = ' ';
+            cell = " ";
             break;
         case 1:
-            cell = '#';
+            cell = SPACESHIP;
             break;
         case 2:
-            cell = '^';
+            cell = BULLET;
             break;
         case 3:
-            cell = '*';
+            cell = ENEMY;
             break;
     }
 
