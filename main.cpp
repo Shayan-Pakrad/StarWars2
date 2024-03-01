@@ -409,6 +409,13 @@ void load_game(Game &game){
 
         fin.close();
     }
+
+    else{
+        cout << "there is no saved game!! play a new game" << endl << endl << "press any key to continue.";
+        char temp;
+        cin >> temp;
+        start_game();
+    }
 }
 
 void delete_saved_file(){
