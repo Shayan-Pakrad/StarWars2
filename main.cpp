@@ -2,8 +2,9 @@
 #include <cstdlib>
 #include <vector>
 #include <fstream>
+#include <cstdio>
 
-//defining colors
+//defining colorized characters
 
 #define BULLET "\033[31m^\033[0m"
 #define SPACESHIP "\033[33m#\033[0m"
@@ -55,6 +56,7 @@ void game_over();
 void check_points(Game &game);
 void save_game(Game &game);
 void load_game(Game &game);
+void delete_saved_file();
 
 
 int main(){
@@ -312,11 +314,17 @@ void check_points(Game &game){
         cin >> new_target_point;
 
         while (new_target_point < game.point + 1){
-            system("cls");
-            cout << "You scored : " << game.point << endl;
-            cout << "Your previous target point : "<< game.target_point << endl << endl;
-            cout << "Enter a higher target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
-            cin >> new_target_point;
+            if (new_target_point == 0){
+                delete_saved_file();
+                exit(0);
+            }
+            else{
+                system("cls");
+                cout << "You scored : " << game.point << endl;
+                cout << "Your previous target point : "<< game.target_point << endl << endl;
+                cout << "Enter a higher target point!! (enter 0 to exit)" << endl << endl << "enter new target point : ";
+                cin >> new_target_point;
+            }
         }
 
         game.target_point = new_target_point;
@@ -372,33 +380,41 @@ void save_game(Game &game){
 void load_game(Game &game){
     ifstream fin("game.txt");
 
-    fin >> game.enemy.name;
-    fin >> game.enemy.x;
-    fin >> game.enemy.y;
-    fin >> game.enemy.health;
-    fin >> game.enemy.size;
+    if (fin.is_open()){
+        fin >> game.enemy.name;
+        fin >> game.enemy.x;
+        fin >> game.enemy.y;
+        fin >> game.enemy.health;
+        fin >> game.enemy.size;
 
-    fin >> game.spaceship.x;
-    fin >> game.spaceship.y;
-    fin >> game.spaceship.health;
+        fin >> game.spaceship.x;
+        fin >> game.spaceship.y;
+        fin >> game.spaceship.health;
 
-    fin >> game.map_size;
-    fin >> game.point;
-    fin >> game.target_point;
+        fin >> game.map_size;
+        fin >> game.point;
+        fin >> game.target_point;
 
-    int num_of_bullets;
+        int num_of_bullets;
 
-    fin >> num_of_bullets;
+        fin >> num_of_bullets;
 
-    Bullet bullet;
-    for (int i = 0; i < num_of_bullets; i++){
-        fin >> bullet.x;
-        fin >> bullet.y;
+        Bullet bullet;
+        for (int i = 0; i < num_of_bullets; i++){
+            fin >> bullet.x;
+            fin >> bullet.y;
 
-        game.bullets.push_back(bullet);
+            game.bullets.push_back(bullet);
+        }
+
+        fin.close();
     }
+}
 
-    fin.close();
+void delete_saved_file(){
+    const char* file_name = "game.txt";
+
+    remove(file_name);
 }
 
 Enemy create_enemy(int &map_size){
@@ -533,6 +549,8 @@ void game_over(){
     char game_over;
 
     cin >> game_over;
+
+    delete_saved_file();
 
     exit(0);
 }
